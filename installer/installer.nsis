@@ -1,0 +1,108 @@
+Unicode True
+Name "AIGSG Proxy"
+
+; -------------------------------
+; Start
+!define MUI_PRODUCT "AIGSG Proxy"
+!define MUI_VERSION "1.0"
+!define MUI_BRANDINGTEXT "AIGSG Proxy Ver. 1.0"
+CRCCheck On
+
+;---------------------------------
+;General
+OutFile "installer.exe"
+ShowInstDetails "nevershow"
+ShowUninstDetails "nevershow"
+SetCompressor "bzip2"
+
+!define MUI_ICON "icon.ico"
+#!define MUI_UNICON "icon.ico"
+#!define MUI_SPECIALBITMAP "Bitmap.bmp"
+
+;--------------------------------
+;Folder selection page
+InstallDir "C:\AigsgProxy"
+
+RequestExecutionLevel admin
+
+;--------------------------------
+;Modern UI Configuration
+!include MUI2.nsh
+!insertmacro MUI_PAGE_WELCOME
+!insertmacro MUI_PAGE_LICENSE "License.txt"
+!insertmacro MUI_PAGE_DIRECTORY
+!insertmacro MUI_PAGE_INSTFILES
+!insertmacro MUI_PAGE_FINISH
+
+; !define MUI_WELCOMEPAGE  
+; !define MUI_LICENSEPAGE
+; !define MUI_DIRECTORYPAGE
+; !define MUI_ABORTWARNING
+; !define MUI_UNINSTALLER
+; !define MUI_UNCONFIRMPAGE
+; !define MUI_FINISHPAGE  
+
+;--------------------------------
+;Language
+!insertmacro MUI_LANGUAGE English
+
+;--------------------------------
+;Data
+; LicenseData "Read_me.txt"
+
+
+; -------------------------------- 
+; Installer Sections
+Section
+  ;Add files
+  SetOutPath "$INSTDIR"
+  FILE /r "FILES\*"
+
+  ; create desktop shortcut
+  ; CreateShortCut "$DESKTOP\${MUI_PRODUCT}.lnk" "$INSTDIR\run.exe" ""
+
+  ; Create start-menu items
+  CreateDirectory "$SMPROGRAMS\${MUI_PRODUCT}"
+  CreateShortCut "$SMPROGRAMS\${MUI_PRODUCT}\Uninstall.lnk" "$INSTDIR\Uninstall.exe" "" "$INSTDIR\Uninstall.exe" 0
+  CreateShortCut "$SMPROGRAMS\${MUI_PRODUCT}\Start Proxy.lnk" "$INSTDIR\nssm-2.24\win64\nssm.exe" "start AigsgProxy" "$INSTDIR\icon.ico"
+  CreateShortCut "$SMPROGRAMS\${MUI_PRODUCT}\Stop Proxy.lnk" "$INSTDIR\nssm-2.24\win64\nssm.exe" "stop AigsgProxy" "$INSTDIR\icon.ico"
+  CreateShortCut "$SMPROGRAMS\${MUI_PRODUCT}\Restart Proxy.lnk" "$INSTDIR\nssm-2.24\win64\nssm.exe" "restart AigsgProxy" "$INSTDIR\icon.ico"
+
+  ; Write uninstall information to the registry
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${MUI_PRODUCT}" "DisplayName" "${MUI_PRODUCT} (remove only)"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${MUI_PRODUCT}" "UninstallString" "$INSTDIR\Uninstall.exe"
+
+  WriteUninstaller "$INSTDIR\Uninstall.exe"
+
+  ; Create Service
+  Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" install AigsgSamba "$INSTDIR\python\python.exe" run.py'
+  Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" set AigsgSamba AppDirectory "$INSTDIR"'
+
+  Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" install AigsgProxy "$INSTDIR\python\python.exe" proxy_svc.py'
+  Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" set AigsgProxy AppDirectory "$INSTDIR"'
+  Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" set AigsgProxy AppExit Default Restart'
+SectionEnd
+
+; --------------------------------
+; Uninstaller Section
+Section "uninstall"
+  Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" stop AigsgProxy'
+  Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" stop AigsgSamba'
+  Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" remove AigsgProxy confirm'
+  Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" remove AigsgSamba confirm'
+
+  ; Delete Files
+  RMDir /r "$INSTDIR\*.*"
+
+  ;Remove the installation directory
+  RMDir "$INSTDIR"
+
+  ;Delete Start Menu Shortcuts
+  Delete "$DESKTOP\${MUI_PRODUCT}.lnk"
+  Delete "$SMPROGRAMS\${MUI_PRODUCT}\*.*"
+  RmDir  "$SMPROGRAMS\${MUI_PRODUCT}"
+
+  ;Delete Uninstaller And Unistall Registry Entries
+  DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\${MUI_PRODUCT}"
+  DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${MUI_PRODUCT}"
+SectionEnd
