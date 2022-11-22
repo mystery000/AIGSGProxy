@@ -1,20 +1,21 @@
 import os
 import io
 import sys
-import logging
-import logging.handlers
-from logging import StreamHandler
-
-import asyncio
 import json
-import multiprocessing as mp
-from typing import Dict, List, Set, Union
-from fastapi import FastAPI, WebSocket, Request, Response
-from fastapi.responses import FileResponse
-from fastapi.middleware.cors import CORSMiddleware
+import logging
+import asyncio
 import uvicorn
 from db import Db
+import logging.handlers
 from yaml import load, dump
+import multiprocessing as mp
+from logging import StreamHandler
+from typing import Dict, List, Set, Union
+from fastapi.responses import FileResponse
+from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, WebSocket, Request, Response, HTTPException
+
 try:
     from yaml import CLoader as Loader
 except ImportError:
@@ -32,6 +33,30 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+class UnicornException(Exception):
+    def __init__(self, name: str):
+        self.name = name
+
+@app.exception_handler(UnicornException)
+async def unicorn_exception_handler(request: Request, exc: UnicornException):
+    logging.basicConfig(
+            format="[%(asctime)s] %(message)s",
+            level=logging.INFO,
+            handlers=[
+                logging.handlers.RotatingFileHandler(
+                    "webservice.txt",
+                    maxBytes=1024 * 1024,
+                    backupCount=100),
+            ]
+        )
+    clientIP = request.client.host
+    logging.info(f"The incoming request from {clientIP} has an invalid URL format.")
+    
+    return JSONResponse(
+        status_code=418,
+        content={"message": "The request has an invalid URL format"},
+    )
+
 
 from conf import Conf
 conf = Conf("conf.yaml")
@@ -41,6 +66,7 @@ log_queues: Set[asyncio.Queue] = set()
 
 @app.get("/api/stationdata/{station_id}")
 async def get_station_data(request: Request, station_id: str = "", From: Union[str, None] = None):
+    if From == None: raise UnicornException(name="invalidURL")
     _db: Db = Db()
     result  = _db.get_pos(station_id,From)
     logging.basicConfig(
@@ -57,9 +83,8 @@ async def get_station_data(request: Request, station_id: str = "", From: Union[s
     serverIP = conf.get_agent_host()
     serverPort = conf.get_agent_port()
 
-    url = serverIP + ":" + str(serverPort) + "/api/stationdata/" + station_id + "?" + From
-    logging.info("Request from " + clientIP)
-    logging.info(url)
+    url = serverIP + ":" + str(serverPort) + "/api/stationdata/" + station_id + "?From=" + From
+    logging.info(clientIP + "---->" + url)
     return { "data": result }
 
 def do_push_log(obj: Dict):
