@@ -81,6 +81,9 @@ Section
   Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" install AigsgProxy "$INSTDIR\python\python.exe" proxy_svc.py'
   Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" set AigsgProxy AppDirectory "$INSTDIR"'
   Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" set AigsgProxy AppExit Default Restart'
+  
+  Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" install AigsgDBService "$INSTDIR\python\python.exe" sqlite-service.py'
+  Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" set AigsgDBService AppDirectory "$INSTDIR"'
 SectionEnd
 
 ; --------------------------------
@@ -88,8 +91,11 @@ SectionEnd
 Section "uninstall"
   Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" stop AigsgProxy'
   Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" stop AigsgSamba'
+  Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" stop AigsgDBService'
   Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" remove AigsgProxy confirm'
   Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" remove AigsgSamba confirm'
+  Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" remove AigsgDBService confirm'
+	
 
   ; Delete Files
   RMDir /r "$INSTDIR\*.*"
