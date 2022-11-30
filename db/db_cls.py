@@ -15,6 +15,9 @@ class Db():
 
     def save_pos(self, source: str, content: str):
         save_pos(self._db, source, content)
-        
+
+    def save_pos(self, created_at: str, source: str, content: str):
+        save_pos(self._db, created_at, source, content) 
+
     def get_pos(self, source: str, created_at: str):
         return get_pos(self._db, source, created_at)
