@@ -2,8 +2,8 @@ import os
 import io
 import sys
 import json
-import logging
 import asyncio
+import logging
 import uvicorn
 from db import Db
 import logging.handlers
@@ -37,6 +37,8 @@ class UnicornException(Exception):
     def __init__(self, name: str):
         self.name = name
 
+
+
 @app.exception_handler(UnicornException)
 async def unicorn_exception_handler(request: Request, exc: UnicornException):
     logging.basicConfig(
@@ -58,6 +60,7 @@ async def unicorn_exception_handler(request: Request, exc: UnicornException):
     )
 
 
+
 from conf import Conf
 conf = Conf("conf.yaml")
 
@@ -66,9 +69,10 @@ log_queues: Set[asyncio.Queue] = set()
 
 @app.get("/api/stationdata/{station_id}")
 async def get_station_data(request: Request, station_id: str = "", From: Union[str, None] = None):
-    if From == None: raise UnicornException(name="invalidURL")
+    if From == None: raise UnicornException(name="WrongURL")
     _db: Db = Db()
     result  = _db.get_pos(station_id,From)
+    print(result)
     logging.basicConfig(
             format="[%(asctime)s] %(message)s",
             level=logging.INFO,
@@ -95,17 +99,6 @@ def do_push_log(obj: Dict):
             queue.put_nowait(obj)
         except:
             pass
-
-#class WebsocketHandler(StreamHandler):
-#    def __init__(self):
-#        StreamHandler.__init__(self)
-
-#    def emit(self, record):
-#        msg = self.format(record)
-#        do_push_log({
-#            "type": "web",
-#            "message": msg
-#        })
 
 
 def root_dir():

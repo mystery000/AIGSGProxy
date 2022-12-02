@@ -1,11 +1,11 @@
 Unicode True
-Name "AIGSG Proxy"
+Name "AIGSG Proxy2"
 
 ; -------------------------------
 ; Start
-!define MUI_PRODUCT "AIGSG Proxy"
+!define MUI_PRODUCT "AIGSG Proxy2"
 !define MUI_VERSION "1.0"
-!define MUI_BRANDINGTEXT "AIGSG Proxy Ver. 1.0"
+!define MUI_BRANDINGTEXT "AIGSG Proxy2 Ver. 1.0"
 CRCCheck On
 
 ;---------------------------------
@@ -21,7 +21,7 @@ SetCompressor "bzip2"
 
 ;--------------------------------
 ;Folder selection page
-InstallDir "C:\AigsgProxy"
+InstallDir "C:\AigsgProxy2"
 
 RequestExecutionLevel admin
 
@@ -75,12 +75,8 @@ Section
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
   ; Create Service
-  Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" install AigsgSamba "$INSTDIR\python\python.exe" run.py'
-  Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" set AigsgSamba AppDirectory "$INSTDIR"'
-
-  Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" install AigsgProxy "$INSTDIR\python\python.exe" proxy_svc.py'
-  Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" set AigsgProxy AppDirectory "$INSTDIR"'
-  Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" set AigsgProxy AppExit Default Restart'
+  Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" install AigsgProxy2 "$INSTDIR\python\python.exe" web.py'
+  Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" set AigsgProxy2 AppDirectory "$INSTDIR"'
   
   Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" install AigsgDBService "$INSTDIR\python\python.exe" sqlite-service.py'
   Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" set AigsgDBService AppDirectory "$INSTDIR"'
@@ -89,11 +85,9 @@ SectionEnd
 ; --------------------------------
 ; Uninstaller Section
 Section "uninstall"
-  Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" stop AigsgProxy'
-  Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" stop AigsgSamba'
+  Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" stop AigsgProxy2'
   Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" stop AigsgDBService'
-  Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" remove AigsgProxy confirm'
-  Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" remove AigsgSamba confirm'
+  Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" remove AigsgProxy2 confirm'
   Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" remove AigsgDBService confirm'
 	
 

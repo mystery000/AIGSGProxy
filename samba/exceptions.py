@@ -1,2 +1,0 @@
-class ResolveHostAddressException(Exception):
-    pass
