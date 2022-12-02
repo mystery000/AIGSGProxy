@@ -75,7 +75,7 @@ Section
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
   ; Create Service
-  Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" install AigsgProxy2 "$INSTDIR\python\python.exe" web.py'
+  Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" install AigsgProxy2 "$INSTDIR\python\python.exe" run.py'
   Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" set AigsgProxy2 AppDirectory "$INSTDIR"'
   
   Exec '"$INSTDIR\nssm-2.24\win64\nssm.exe" install AigsgDBService "$INSTDIR\python\python.exe" sqlite-service.py'
