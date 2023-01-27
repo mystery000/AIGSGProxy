@@ -12,6 +12,7 @@ New-Item -ItemType Directory -Path "$TARGETDIR\kvdb"
 New-Item -ItemType Directory -Path "$TARGETDIR\proxy"
 New-Item -ItemType Directory -Path "$TARGETDIR\samba"
 New-Item -ItemType Directory -Path "$TARGETDIR\server"
+New-Item -ItemType Directory -Path "$TARGETDIR\tcp"
 
 Copy-Item -Path "icon.ico" -Destination $TARGETDIR
 Copy-Item -Path "..\*.py" -Destination $TARGETDIR
