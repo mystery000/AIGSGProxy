@@ -90,6 +90,33 @@ async def get_station_data(request: Request, station_id: str = "", From: Union[s
     logging.info(clientIP + "---->" + url)
     return { "data": result }
 
+@app.get("/api/samba/{samba_id}")
+async def get_samba_data(request: Request, samba_id: str = "", From: Union[str, None] = None):
+    if From == None: raise UnicornException(name="WrongURL")
+    _db: Db = Db()
+    result  = _db.get_samba(samba_id,From)
+
+    logging.basicConfig(
+            format="[%(asctime)s] %(message)s",
+            level=logging.INFO,
+            handlers=[
+                logging.handlers.RotatingFileHandler(
+                    "webservice.txt",
+                    maxBytes=1024 * 1024,
+                    backupCount=100),
+            ]
+        )
+
+    clientIP = request.client.host
+    serverIP = conf.get_agent_host()
+    serverPort = conf.get_agent_port()
+
+    url = serverIP + ":" + str(serverPort) + "/api/samba/" + samba_id + "?From=" + From
+    logging.info(clientIP + "---->" + url)
+
+
+    return {"SMB": result}
+
 def do_push_log(obj: Dict):
     global log_queues
 
