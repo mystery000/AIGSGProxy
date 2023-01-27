@@ -11,7 +11,7 @@ proxies:
 - alias: 'FSMAE015'
   auto_connect: true
   name: FSMAE015
-  origin: 10.85.60.28:1001
+  origin: 192.168.108.129:2002
   port: 6802
   reconnect_inverval: 2
 - alias: 'STM Contagem 05'
@@ -59,13 +59,13 @@ proxies:
 servers:
 - name: Server 1
   port: 1001
-  serial: '2000774'
+  serial: '3261'
 smb:
-  enabled: false
+  enabled: true
   interval_in_seconds: 5
-  password: Admin@123
+  password: ' '
   reconnect_inverval: 10
   root: /
-  server: BNS
-  service: TestShared
-  username: Administrator
+  server: 192.168.108.129
+  service: Mecanizado
+  username: hiya
