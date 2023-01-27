@@ -20,7 +20,7 @@ from server import Server
 from kvdb import KVDB, DBValue
 from conf import Conf
 from db import Db
-
+import xml.etree.ElementTree as ET
 FILE_EXTENSION = 'dat'
 
 
@@ -133,10 +133,49 @@ class App():
         self._db.set(full_path, DBValue(
             last_processed=datetime.now(),
             last_write=last_write))
-
+        
+        # SMB save shared files to sqlite database
+        parsed_xml_data = self._parse_xml_data(xml_data)
+        self._sqlite_db.save_pos(serial, parsed_xml_data)
+        logging.info("SMB shared file is saved to SQLite")
         logging.info("  Done")
         return True
 
+    def _parse_xml_data(self, xml_data: bytes):
+        parsed_xml_data = None
+        # Create element tree for XML
+        tree = ET.ElementTree(ET.fromstring(str(xml_data, 'utf-8')))
+        root = tree.getroot()
+
+        _BPSCreated = root.attrib["Created"]
+        ele = tree.find('.//Machine')
+        _SerialNumber = ele.attrib["SerialNumber"]
+        ele = tree.find('.//ParameterSection')
+        _StartTime = ele.attrib["StartTime"]
+        _EndTime = ele.attrib["EndTime"]
+        ele = tree.find('.//HeadercardUnit')
+        _HeaderCardID = ele.attrib["HeaderCardID"]
+        _DepositID = ele.attrib["DepositID"]
+        
+        _counters = []
+        for counter in root.iter('Counter'):
+            DenomID = counter.attrib["DenomID"]
+            Value = counter.attrib["Value"]
+            Number = counter.attrib["Number"]
+            Total = int(Value) * int(Number)
+            _counters.append({"DenomID":DenomID, "Value":Value, "Number":Number, "Total":Total})
+
+        # Create text to display xml data 
+        parsed_xml_data = f'BPS Created="{_BPSCreated}"\r\nMachine SerialNumber="{_SerialNumber}"\r\nStartTime="{_StartTime}" EndTime="{_EndTime}"\r\nHeaderCardID="{_HeaderCardID}" DepositID="{_DepositID}"\r\n'
+
+        for counter in _counters:
+            DenomID = counter["DenomID"]
+            Value = counter["Value"]
+            Number = counter["Number"]
+            Total = counter["Total"]
+            parsed_xml_data += f'DenomID="{DenomID}" Value="{Value}" Number="{Number}" Total="{Total}" \r\n'
+
+        return parsed_xml_data
 
     def _start_servers(self):
         servers = self._conf.get_servers()
