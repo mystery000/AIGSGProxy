@@ -16,7 +16,7 @@ import requests
 from tcp import TCPProxy
 from conf import Conf
 from db import Db
-
+import sqlite3
 
 class WebsocketHandler(StreamHandler):
     _skip: bool
@@ -98,13 +98,25 @@ class App():
 
         now = datetime.datetime.now()
         if self._last_check < rtime and now > rtime:
+            conn = sqlite3.connect('collection.sqlite3')
+            save_date = now.strftime("%d-%b-%Y-%H-%M-%S")
+            with open(f"{save_date}.sql", "w") as dump_file:
+                for line in conn.iterdump():
+                    dump_file.write('%s\n' % line)
+            conn.execute("DELETE FROM pos_data")
+            conn.commit()
+            conn.execute("VACUUM")
+            conn.commit()
+            conn.close()
+            
+            logging.info("The sqlite dump was successful!")
             exit()
 
         self._last_check = now
 
     async def run(self):
         await self._start_proxies()
-
+  
         while True:
             if self._queue is not None:
                 if not self._queue.empty():
@@ -194,7 +206,6 @@ def main():
             # WebsocketHandler()
         ]
     )
-    logging.info("asdfasdfasfdsdaf")
     entry_point(None)
 
     
