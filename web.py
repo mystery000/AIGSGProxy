@@ -79,7 +79,7 @@ async def get_station_data(request: Request, station_id: str = "", From: Union[s
             level=logging.INFO,
             handlers=[
                 logging.handlers.RotatingFileHandler(
-                    "webservice.txt",
+                    "logs/Webservice-POS.txt",
                     maxBytes=1024 * 1024,
                     backupCount=100),
             ]
@@ -103,7 +103,7 @@ async def get_samba_data(request: Request, samba_id: str = "", From: Union[str, 
             level=logging.INFO,
             handlers=[
                 logging.handlers.RotatingFileHandler(
-                    "webservice.txt",
+                    "logs/Webservice-SAMBA.txt",
                     maxBytes=1024 * 1024,
                     backupCount=100),
             ]

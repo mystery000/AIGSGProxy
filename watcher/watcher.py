@@ -1,3 +1,4 @@
+import sqlite3
 from datetime import datetime
 
 class Watcher():
@@ -16,6 +17,16 @@ class Watcher():
 
         now = datetime.now()
         if self._last_check < rtime and now > rtime:
+            conn = sqlite3.connect('data.sqlite3')
+            save_date = now.strftime("%d-%b-%Y-%H-%M")
+            with open(f"{save_date}.sql", "w") as dump_file:
+                for line in conn.iterdump():
+                    dump_file.write('%s\n' % line)
+            conn.execute("DELETE FROM pos_data")
+            conn.commit()
+            conn.execute("VACUUM")
+            conn.commit()
+            conn.close()
             exit()
 
         self._last_check = now

@@ -21,7 +21,6 @@ from datetime import datetime, timedelta
 from socket import socket, gethostbyname
 FILE_EXTENSION = 'dat'
 
-from watcher import Watcher
 
 class WebsocketHandler(StreamHandler):
     _skip: bool
@@ -55,10 +54,8 @@ class App():
     _conf: Conf
     _sqlite_db: Db
     _queue: mp.Queue
-    _watcher: Watcher
 
     def __init__(self, queue: mp.Queue):
-        self._watcher = Watcher()
         self._sqlite_db = Db()
 
         conf = Conf("conf.yaml")
@@ -209,7 +206,7 @@ class App():
             self._connect_smb()
 
         while True:
-            self._watcher.check_schedule()
+
             now = datetime.now()
 
             if self._conf.get_smb_enabled():
