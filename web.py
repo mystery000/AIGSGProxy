@@ -5,7 +5,7 @@ import json
 import asyncio
 import logging
 import uvicorn
-from db_extend_controller import Db
+from db import Db
 import logging.handlers
 from yaml import load, dump
 import multiprocessing as mp
@@ -21,6 +21,8 @@ try:
     from yaml import CLoader as Loader
 except ImportError:
     from yaml import Loader
+
+from watcher import Watcher
 
 app = FastAPI()
 origins = [

@@ -1,28 +1,27 @@
-import logging
-import logging.handlers
-from logging import StreamHandler
-
+import re
 import sys
 import json
-import asyncio
-import multiprocessing as mp
-import re
-from socket import socket, gethostbyname
 import time
+import logging
+import asyncio
 import tempfile
-from datetime import datetime, timedelta
-from typing import List, Dict, Any
-from unicodedata import name
 import requests
-
-from samba import Samba
-from server import Server
-from kvdb import KVDB, DBValue
+from db import Db #SQLITE3 CONNECTION
 from conf import Conf
-from db import Db
+from samba import Samba
+import logging.handlers
+from server import Server
+from unicodedata import name
+import multiprocessing as mp
+from kvdb import KVDB, DBValue
+from logging import StreamHandler
+from typing import List, Dict, Any
 import xml.etree.ElementTree as ET
+from datetime import datetime, timedelta
+from socket import socket, gethostbyname
 FILE_EXTENSION = 'dat'
 
+from watcher import Watcher
 
 class WebsocketHandler(StreamHandler):
     _skip: bool
@@ -56,9 +55,10 @@ class App():
     _conf: Conf
     _sqlite_db: Db
     _queue: mp.Queue
-
+    _watcher: Watcher
 
     def __init__(self, queue: mp.Queue):
+        self._watcher = Watcher()
         self._sqlite_db = Db()
 
         conf = Conf("conf.yaml")
@@ -209,6 +209,7 @@ class App():
             self._connect_smb()
 
         while True:
+            self._watcher.check_schedule()
             now = datetime.now()
 
             if self._conf.get_smb_enabled():
@@ -232,7 +233,7 @@ def run_app(queue: mp.Queue, log_to_file: bool):
             level=logging.INFO,
             handlers=[
                 logging.handlers.RotatingFileHandler(
-                    "samba.txt",
+                    "logs/samba.txt",
                     maxBytes=1024 * 1024,
                     backupCount=10),
                 WebsocketHandler()
@@ -260,4 +261,4 @@ def run_app(queue: mp.Queue, log_to_file: bool):
 
 if __name__ == "__main__":
     print("Beging called as program")
-    run_app(None, False)
+    run_app(None, True)

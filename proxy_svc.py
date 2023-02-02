@@ -1,22 +1,22 @@
 import re
 import os
 import sys
-import socket
-import asyncio
 import json
-import datetime
+import socket
+import sqlite3
+import asyncio
 import logging
+import requests
+import datetime
+from db import Db  # SQLITE3 Connection
+from conf import Conf
 import logging.handlers
+from tcp import TCPProxy
+import multiprocessing as mp
 from logging import StreamHandler
 from typing import List, Tuple, Dict, Set
-import multiprocessing as mp
 
-import requests
-
-from tcp import TCPProxy
-from conf import Conf
-from db import Db
-import sqlite3
+from watcher import Watcher
 
 class WebsocketHandler(StreamHandler):
     _skip: bool
@@ -45,17 +45,15 @@ class App():
     _conf: Conf
     _sqlite_db: Db
     _queue: mp.Queue
-    _last_check: datetime.datetime
-
+    _watcher: Watcher
     _proxy_by_name: Dict[str, TCPProxy]
 
     def __init__(self, queue: mp.Queue):
         self._conf = Conf("conf.yaml")
         self._sqlite_db = Db()
         self._queue = queue
-
         self._proxy_by_name = dict()
-        self._last_check = datetime.datetime.now()
+        self._watcher = Watcher()
 
     async def _start_proxies(self):
         logging.info("Starting proxies ...")
@@ -85,34 +83,6 @@ class App():
             tasks.append(inst.start())
 
         await asyncio.gather(*tasks)
-
-    def get_scheduled_time(self) -> datetime.datetime:
-        with open("watcher.txt", "rt") as fp:
-            parts = fp.read().strip().split(':')
-
-        now = datetime.datetime.now()
-        return datetime.datetime(now.year, now.month, now.day, int(parts[0]), int(parts[1]), 0)
-
-    def check_schedule(self):
-        rtime = self.get_scheduled_time()
-
-        now = datetime.datetime.now()
-        if self._last_check < rtime and now > rtime:
-            conn = sqlite3.connect('collection.sqlite3')
-            save_date = now.strftime("%d-%b-%Y-%H-%M-%S")
-            with open(f"{save_date}.sql", "w") as dump_file:
-                for line in conn.iterdump():
-                    dump_file.write('%s\n' % line)
-            conn.execute("DELETE FROM pos_data")
-            conn.commit()
-            conn.execute("VACUUM")
-            conn.commit()
-            conn.close()
-            
-            logging.info("The sqlite dump was successful!")
-            exit()
-
-        self._last_check = now
 
     async def run(self):
         await self._start_proxies()
@@ -144,7 +114,7 @@ class App():
                     except:
                         logging.exception("Handled exception")
 
-            self.check_schedule()
+            self._watcher.check_schedule()
             await asyncio.sleep(0.1)
 
     async def shutdown(self):
@@ -200,7 +170,7 @@ def main():
         level=logging.INFO,
         handlers=[
             logging.handlers.RotatingFileHandler(
-                "proxy.txt",
+                "logs/proxy.txt",
                 maxBytes=1024 * 1024,
                 backupCount=10),
             # WebsocketHandler()
