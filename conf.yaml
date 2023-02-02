@@ -17,44 +17,26 @@ proxies:
 - alias: 'STM Contagem 05'
   auto_connect: true
   name: STM Contagem 05
-  origin: 10.85.60.18:1001
+  origin: 192.168.108.129:2003
   port: 6805
   reconnect_inverval: 10
 - alias: 'STM Contagem 07'
   auto_connect: true
   name: STM Contagem 07
-  origin: 10.85.60.22:1001
+  origin: 192.168.108.129:2004
   port: 6807
   reconnect_inverval: 10
 - alias: 'STM Contagem 14'
   auto_connect: true
   name: STM Contagem 14
-  origin: 10.85.60.25:1001
+  origin: 192.168.108.129:2005
   port: 6814
   reconnect_inverval: 10
 - alias: 'STM Contagem 17'
   auto_connect: true
   name: STM Contagem 17
-  origin: 10.85.60.34:1001
+  origin: 192.168.108.129:2006
   port: 6817
-  reconnect_inverval: 10
-- alias: 'STM Contagem 19'
-  auto_connect: true
-  name: STM Contagem 19
-  origin: 10.85.60.29:1001
-  port: 6819
-  reconnect_inverval: 10
-- alias: 'STM Contagem 20'
-  auto_connect: true
-  name: STM Contagem 20
-  origin: 10.85.60.15:1001
-  port: 6820
-  reconnect_inverval: 10
-- alias: 'STM Contagem 24'
-  auto_connect: true
-  name: STM Contagem 24
-  origin: 10.85.60.50:1001
-  port: 6824
   reconnect_inverval: 10
 servers:
 - name: Server 1
