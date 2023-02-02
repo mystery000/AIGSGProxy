@@ -1,0 +1,71 @@
+agent:
+  host: 192.168.108.129
+  port: 8090
+proxies:
+- alias: 'STM Contagem 15'
+  auto_connect: true
+  name: STM Contagem 15
+  origin: 192.168.108.129:2001
+  port: 6815
+  reconnect_inverval: 10
+- alias: 'FSMAE015'
+  auto_connect: true
+  name: FSMAE015
+  origin: 192.168.108.129:2002
+  port: 6802
+  reconnect_inverval: 2
+- alias: 'STM Contagem 05'
+  auto_connect: true
+  name: STM Contagem 05
+  origin: 10.85.60.18:1001
+  port: 6805
+  reconnect_inverval: 10
+- alias: 'STM Contagem 07'
+  auto_connect: true
+  name: STM Contagem 07
+  origin: 10.85.60.22:1001
+  port: 6807
+  reconnect_inverval: 10
+- alias: 'STM Contagem 14'
+  auto_connect: true
+  name: STM Contagem 14
+  origin: 10.85.60.25:1001
+  port: 6814
+  reconnect_inverval: 10
+- alias: 'STM Contagem 17'
+  auto_connect: true
+  name: STM Contagem 17
+  origin: 10.85.60.34:1001
+  port: 6817
+  reconnect_inverval: 10
+- alias: 'STM Contagem 19'
+  auto_connect: true
+  name: STM Contagem 19
+  origin: 10.85.60.29:1001
+  port: 6819
+  reconnect_inverval: 10
+- alias: 'STM Contagem 20'
+  auto_connect: true
+  name: STM Contagem 20
+  origin: 10.85.60.15:1001
+  port: 6820
+  reconnect_inverval: 10
+- alias: 'STM Contagem 24'
+  auto_connect: true
+  name: STM Contagem 24
+  origin: 10.85.60.50:1001
+  port: 6824
+  reconnect_inverval: 10
+servers:
+- name: Server 1
+  port: 1001
+  serial: '3261'
+smb:
+  enabled: true
+  interval_in_seconds: 5
+  password: ' '
+  reconnect_inverval: 10
+  root: /
+  server: 192.168.108.129
+  service: Mecanizado
+  username: hiya
