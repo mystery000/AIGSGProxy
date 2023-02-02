@@ -278,7 +278,7 @@ def run_web(queue: mp.Queue, log_to_file: bool, is_debug: bool = False):
             level=logging.INFO,
             handlers=[
                 logging.handlers.RotatingFileHandler(
-                    "web.txt",
+                    "logs/web.txt",
                     maxBytes=1024 * 1024,
                     backupCount=10),
             ]

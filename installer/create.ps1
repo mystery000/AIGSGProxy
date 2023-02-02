@@ -7,12 +7,13 @@ if ((Test-Path -Path $TARGETDIR)) {
 New-Item -ItemType Directory -Path $TARGETDIR
 New-Item -ItemType Directory -Path "$TARGETDIR\conf"
 New-Item -ItemType Directory -Path "$TARGETDIR\db"
-New-Item -ItemType Directory -Path "$TARGETDIR\db_extend_controller"
 New-Item -ItemType Directory -Path "$TARGETDIR\kvdb"
 New-Item -ItemType Directory -Path "$TARGETDIR\proxy"
 New-Item -ItemType Directory -Path "$TARGETDIR\samba"
 New-Item -ItemType Directory -Path "$TARGETDIR\server"
 New-Item -ItemType Directory -Path "$TARGETDIR\tcp"
+New-Item -ItemType Directory -Path "$TARGETDIR\logs"
+New-Item -ItemType Directory -Path "$TARGETDIR\watcher"
 
 Copy-Item -Path "icon.ico" -Destination $TARGETDIR
 Copy-Item -Path "..\*.py" -Destination $TARGETDIR
@@ -20,12 +21,12 @@ Copy-Item -Path "..\watcher.txt" -Destination $TARGETDIR
 Copy-Item -Path "..\conf_prod.yaml" -Destination $TARGETDIR\conf.yaml
 Copy-Item -Path "..\conf\*.py" -Destination "$TARGETDIR\conf"
 Copy-Item -Path "..\db\*.py" -Destination "$TARGETDIR\db"
-Copy-Item -Path "..\db_extend_controller\*.py" -Destination "$TARGETDIR\db_extend_controller"
 Copy-Item -Path "..\kvdb\*.py" -Destination "$TARGETDIR\kvdb"
 Copy-Item -Path "..\samba\*.py" -Destination "$TARGETDIR\samba"
 Copy-Item -Path "..\server\*.py" -Destination "$TARGETDIR\server"
 Copy-Item -Path "..\config\*" -Destination "$TARGETDIR\config"
 Copy-Item -Path "..\tcp\*" -Destination "$TARGETDIR\tcp"
+Copy-Item -Path "..\watcher\*.py" -Destination "$TARGETDIR\watcher"
 
 New-Item -ItemType Directory -Path "$TARGETDIR\config\static"
 New-Item -ItemType Directory -Path "$TARGETDIR\config\static\css"
