@@ -117,7 +117,7 @@ async def get_samba_data(request: Request, samba_id: str = "", From: Union[str, 
     logging.info(clientIP + "---->" + url)
 
 
-    return {"SMB": result}
+    return {"data": result}
 
 def do_push_log(obj: Dict):
     global log_queues

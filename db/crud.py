@@ -21,7 +21,7 @@ def get_pos(db: Session, source: str, created_at: str) -> None:
     return records
 
 def get_samba(db: Session, source: str, created_at: str) -> None:
-    records = db.query(models.PosData.created_at.label('TimeStamp'), models.PosData.content.label('Content')).filter(models.PosData.source == source).filter(models.PosData.created_at >= created_at).order_by(models.PosData.id.desc()).limit(50).all()
+    records = db.query(models.PosData.created_at.label('TimeStamp'), models.PosData.content.label('Message')).filter(models.PosData.source == source).filter(models.PosData.created_at >= created_at).order_by(models.PosData.id.desc()).limit(50).all()
     posData = []
     
     for record in records:
