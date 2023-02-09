@@ -132,8 +132,8 @@ class App():
             last_write=last_write))
         
         # SMB save shared files to sqlite database
-        parsed_xml_data = self._parse_xml_data(xml_data)
-        self._sqlite_db.save_pos(serial, parsed_xml_data)
+        parsed_xml_data, _BPSCreated = self._parse_xml_data(xml_data)
+        self._sqlite_db.save_pos(serial, parsed_xml_data, _BPSCreated)
         logging.info("SMB shared file is saved to SQLite")
         logging.info("  Done")
         return True
@@ -172,7 +172,7 @@ class App():
             Total = counter["Total"]
             parsed_xml_data += f'DenomID="{DenomID}" Value="{Value}" Number="{Number}" Total="{Total}" \r\n'
 
-        return parsed_xml_data
+        return parsed_xml_data, _BPSCreated
 
     def _start_servers(self):
         servers = self._conf.get_servers()
