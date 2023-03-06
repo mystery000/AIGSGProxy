@@ -165,13 +165,17 @@ class App():
         # Create text to display xml data 
         parsed_xml_data = f'BPS Created="{_BPSCreated}"\r\nMachine SerialNumber="{_SerialNumber}"\r\nStartTime="{_StartTime}" EndTime="{_EndTime}"\r\nHeaderCardID="{_HeaderCardID}" DepositID="{_DepositID}"\r\n'
 
+        TotalAmount: int = 0
+
         for counter in _counters:
             DenomID = counter["DenomID"]
             Value = counter["Value"]
             Number = counter["Number"]
             Total = counter["Total"]
+            TotalAmount += Total
             parsed_xml_data += f'DenomID="{DenomID}" Value="{Value}" Number="{Number}" Total="{Total}" \r\n'
 
+        parsed_xml_data += f'TotalAmount={TotalAmount}'
         return parsed_xml_data, _BPSCreated
 
     def _start_servers(self):
